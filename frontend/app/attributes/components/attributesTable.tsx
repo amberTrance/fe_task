@@ -1,18 +1,16 @@
 "use client";
-import { useMount } from "react-use";
-import { useDispatch } from "react-redux";
 
-import { addAttributes } from "@/app/redux/features/attributesSlice";
-import { AppDispatch, useAppSelector } from "@/app/redux/store";
-import styles from "./attributesTable.module.css";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
+
+import styles from "./attributesTable.module.css";
 
 type AttributesTableProps = {
   attributes: Attributes;
 };
 
 export const AttributesTable = ({ attributes }: AttributesTableProps) => {
-  const dispatch = useDispatch<AppDispatch>();
+  const router = useRouter();
 
   // --- STATE ---
 
@@ -21,7 +19,10 @@ export const AttributesTable = ({ attributes }: AttributesTableProps) => {
   // --- HELPERS ---
 
   const attributesRows = attributes.data.map((attribute) => (
-    <tr className={styles.cell} key={attribute.name}>
+    <tr
+      key={attribute.name}
+      onClick={() => router.push(`/attributes/${attribute.id}`)}
+    >
       <td className={styles.cell}>{attribute.name}</td>
       <td className={styles.cell}>{attribute.name}</td>
       <td className={styles.cell}>{attribute.createdAt}</td>
@@ -32,13 +33,15 @@ export const AttributesTable = ({ attributes }: AttributesTableProps) => {
 
   return (
     <table className={styles.table}>
-      <tr className={styles.cell}>
-        <th className={styles.cell}>Name</th>
-        <th className={styles.cell}>Labels</th>
-        <th className={styles.cell}>Created At</th>
-      </tr>
+      <tbody>
+        <tr>
+          <th className={styles.tableHeader}>Name</th>
+          <th className={styles.tableHeader}>Labels</th>
+          <th className={styles.tableHeader}>Created At</th>
+        </tr>
 
-      {attributesRows}
+        {attributesRows}
+      </tbody>
     </table>
   );
 };

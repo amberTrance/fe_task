@@ -7,14 +7,16 @@ type Attribute = {
 };
 
 type Attributes = {
-  data: Attribute[],
-  meta: "offset": 0,
-    "limit": 10,
-    "searchText": "",
-    "sortBy": "name",
-    "sortDir": "asc",
-    "hasNextPage": true
-}
+  data: Attribute[];
+  meta: {
+    offset: number;
+    limit: number;
+    searchText: string;
+    sortBy: "name" | "createdAt";
+    sortDir: "asc" | "desc";
+    hasNextPage: boolean;
+  };
+};
 
 type LabelId = string;
 

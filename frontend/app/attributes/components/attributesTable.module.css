@@ -1,5 +1,10 @@
 .cell {
   padding: 30px 20px;
+  cursor: pointer;
+}
+
+.tableHeader {
+  padding: 30px 20px;
 }
 
 .table {
