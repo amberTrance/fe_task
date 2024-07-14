@@ -1,15 +1,12 @@
 type FetchAttributesProps = {
-  limit: number;
   offset: number;
 };
 
 export const getAttributes = async ({
-  limit,
   offset,
 }: FetchAttributesProps): Promise<Attributes> => {
   const url = new URL("http://localhost:3000/attributes");
 
-  url.searchParams.set("limit", String(limit));
   url.searchParams.set("offset", String(offset));
 
   const response = await fetch(url);
@@ -34,10 +31,9 @@ export const getLabels = async (): Promise<Label[]> => {
 };
 
 export const getAttributesAndLabels = async ({
-  limit,
   offset,
 }: FetchAttributesProps) => {
-  const attributes = await getAttributes({ limit, offset });
+  const attributes = await getAttributes({ offset });
   const labels = await getLabels();
 
   return { attributes, labels };
