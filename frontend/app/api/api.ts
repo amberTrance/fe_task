@@ -1,10 +1,10 @@
-type FetchAttributesProps = {
+type MetaProps = {
   offset: number;
 };
 
 export const getAttributes = async ({
   offset,
-}: FetchAttributesProps): Promise<Attributes> => {
+}: MetaProps): Promise<Attributes> => {
   const url = new URL("http://localhost:3000/attributes");
 
   url.searchParams.set("offset", String(offset));
@@ -20,21 +20,30 @@ export const getAttributes = async ({
   return result;
 };
 
-export const getLabels = async (): Promise<Label[]> => {
-  const res = await fetch("http://localhost:3000/labels");
+export const getAllLabels = async (): Promise<Labels> => {
+  let offset = 0;
+  let allLabels: Labels = { data: [], meta: {} };
+  let hasNextPage = true;
 
-  if (!res.ok) {
-    throw new Error("Failed to fetch labels.");
-  }
+  const url = new URL("http://localhost:3000/labels");
 
-  return res.json();
-};
+  do {
+    url.searchParams.set("offset", String(offset));
 
-export const getAttributesAndLabels = async ({
-  offset,
-}: FetchAttributesProps) => {
-  const attributes = await getAttributes({ offset });
-  const labels = await getLabels();
+    const response = await fetch(url);
 
-  return { attributes, labels };
+    if (!response.ok) {
+      throw new Error("Failed to fetch attributes.");
+    }
+
+    const result = await response.json();
+
+    allLabels.data.push(...result.data);
+    allLabels.meta = result.meta;
+    hasNextPage = result.meta.hasNextPage;
+
+    offset = offset + 10;
+  } while (hasNextPage);
+
+  return allLabels;
 };

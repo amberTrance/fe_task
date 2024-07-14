@@ -1,12 +1,14 @@
-import { getAttributesAndLabels } from "../api/api";
+import { getAttributes, getAllLabels } from "../api/api";
 import { AttributesTable } from "./components/attributesTable";
 
 import styles from "./page.module.css";
 
 export default async function Attributes() {
-  const { attributes, labels } = await getAttributesAndLabels({
+  const attributes = await getAttributes({
     offset: 0,
   });
+
+  const labels = await getAllLabels();
 
   // --- RENDER ---
 
@@ -15,7 +17,12 @@ export default async function Attributes() {
       <section>
         <h1 className={styles.heading}>Attributes</h1>
 
-        {attributes && <AttributesTable attributes={attributes} />}
+        {attributes && (
+          <AttributesTable
+            attributesServer={attributes}
+            labelsServer={labels}
+          />
+        )}
       </section>
     </main>
   );

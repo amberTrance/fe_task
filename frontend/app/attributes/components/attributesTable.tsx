@@ -12,25 +12,27 @@ import { addAttributes } from "@/app/redux/features/attributesSlice";
 import { fetchAttributes } from "@/app/redux/thunks";
 
 type AttributesTableProps = {
-  attributes: Attributes;
+  attributesServer: Attributes;
+  labelsServer: Labels;
 };
 
-export const AttributesTable = ({ attributes }: AttributesTableProps) => {
+export const AttributesTable = ({
+  attributesServer,
+  labelsServer,
+}: AttributesTableProps) => {
   const router = useRouter();
   const dispatch = useDispatch<AppDispatch>();
-  const containerRef = useRef<HTMLTableRowElement | null>(null);
-  const attr = useAppSelector((state) => state.attributesReducer.value);
+  console.log(labelsServer);
 
-  const clientAttributes = useAppSelector(
-    (state) => state.attributesReducer.value
-  );
+  const containerRef = useRef<HTMLTableRowElement | null>(null);
+  const attributes = useAppSelector((state) => state.attributesReducer.value);
 
   // --- EFFECTS ---
 
   useEffect(() => {
     const observer = new IntersectionObserver(
       ([entry]) => {
-        if (entry.isIntersecting && attr.meta.hasNextPage) {
+        if (entry.isIntersecting && attributes.meta.hasNextPage) {
           dispatch(fetchAttributes());
         }
       },
@@ -44,26 +46,32 @@ export const AttributesTable = ({ attributes }: AttributesTableProps) => {
     }
 
     return () => observer.disconnect();
-  }, [attr.meta.hasNextPage, containerRef, dispatch]);
+  }, [attributes.meta.hasNextPage, containerRef, dispatch]);
 
   useMount(() => {
-    if (isEmpty(clientAttributes.data)) {
-      dispatch(addAttributes(attributes));
+    if (isEmpty(attributes.data)) {
+      dispatch(addAttributes(attributesServer));
     }
   });
 
   // --- HELPERS ---
 
-  const attributesRows = attr.data.map((attribute) => (
-    <tr
-      key={attribute.name}
-      onClick={() => router.push(`/attributes/${attribute.id}`)}
-    >
-      <td className={styles.cell}>{attribute.name}</td>
-      <td className={styles.cell}>{attribute.name}</td>
-      <td className={styles.cell}>{attribute.createdAt}</td>
-    </tr>
-  ));
+  const attributesRows = attributes.data.map((attribute) => {
+    const labels = attribute.labelIds.map(
+      (labelId) => labelsServer.data.find((label) => label.id === labelId)?.name
+    );
+
+    return (
+      <tr
+        key={attribute.name}
+        onClick={() => router.push(`/attributes/${attribute.id}`)}
+      >
+        <td className={styles.cell}>{attribute.name}</td>
+        <td className={styles.cell}>{labels.join(", ")}</td>
+        <td className={styles.cell}>{attribute.createdAt}</td>
+      </tr>
+    );
+  });
 
   // --- RENDER ---
 

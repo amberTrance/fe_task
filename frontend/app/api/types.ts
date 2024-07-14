@@ -9,13 +9,16 @@ type Attribute = {
 type Attributes = {
   data: Attribute[];
   meta: {
-    offset: number;
-    limit: number;
     searchText: string;
     sortBy: "name" | "createdAt";
     sortDir: "asc" | "desc";
-    hasNextPage: boolean;
-  };
+  } & PageProps;
+};
+
+type PageProps = {
+  offset: number;
+  limit: number;
+  hasNextPage: boolean;
 };
 
 type LabelId = string;
@@ -23,4 +26,9 @@ type LabelId = string;
 type Label = {
   id: LabelId;
   name: string;
+};
+
+type Labels = {
+  data: Label[];
+  meta: PageProps;
 };
