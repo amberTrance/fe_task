@@ -6,6 +6,10 @@ type Attribute = {
   name: string;
 };
 
+type AttributeDetails = {
+  data: Attribute;
+};
+
 type Attributes = {
   data: Attribute[];
   meta: {

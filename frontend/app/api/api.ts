@@ -20,9 +20,30 @@ export const getAttributes = async ({
   return result;
 };
 
+export const getAttributeDetails = async ({
+  id,
+}: {
+  id: string;
+}): Promise<AttributeDetails> => {
+  const url = new URL(`http://localhost:3000/attributes/${id}`);
+
+  const response = await fetch(url);
+
+  if (!response.ok) {
+    throw new Error("Failed to fetch attributes.");
+  }
+
+  const result = await response.json();
+
+  return result;
+};
+
 export const getAllLabels = async (): Promise<Labels> => {
   let offset = 0;
-  let allLabels: Labels = { data: [], meta: {} };
+  let allLabels: Labels = {
+    data: [],
+    meta: { offset: 0, limit: 10, hasNextPage: true },
+  };
   let hasNextPage = true;
 
   const url = new URL("http://localhost:3000/labels");

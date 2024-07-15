@@ -1,0 +1,6 @@
+.backButton {
+  align-items: center;
+  display: flex;
+  font-weight: bold;
+  gap: 8px;
+}

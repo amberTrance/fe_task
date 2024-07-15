@@ -4,12 +4,14 @@ import { useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { useMount } from "react-use";
 import { isEmpty } from "lodash";
+import { useDispatch } from "react-redux";
 
 import styles from "./attributesTable.module.css";
-import { useDispatch } from "react-redux";
 import { AppDispatch, useAppSelector } from "@/app/redux/store";
 import { addAttributes } from "@/app/redux/features/attributesSlice";
 import { fetchAttributes } from "@/app/redux/thunks";
+import { mapAttributesLabelIdsToLabels } from "../utils/helpers";
+import { DeleteButton } from "@/app/components/deleteButton";
 
 type AttributesTableProps = {
   attributesServer: Attributes;
@@ -22,7 +24,6 @@ export const AttributesTable = ({
 }: AttributesTableProps) => {
   const router = useRouter();
   const dispatch = useDispatch<AppDispatch>();
-  console.log(labelsServer);
 
   const containerRef = useRef<HTMLTableRowElement | null>(null);
   const attributes = useAppSelector((state) => state.attributesReducer.value);
@@ -54,12 +55,15 @@ export const AttributesTable = ({
     }
   });
 
+  const handleDelete = () => {};
+
   // --- HELPERS ---
 
   const attributesRows = attributes.data.map((attribute) => {
-    const labels = attribute.labelIds.map(
-      (labelId) => labelsServer.data.find((label) => label.id === labelId)?.name
-    );
+    const labels = mapAttributesLabelIdsToLabels({
+      attribute,
+      labels: labelsServer,
+    });
 
     return (
       <tr
@@ -69,6 +73,9 @@ export const AttributesTable = ({
         <td className={styles.cell}>{attribute.name}</td>
         <td className={styles.cell}>{labels.join(", ")}</td>
         <td className={styles.cell}>{attribute.createdAt}</td>
+        <td className={styles.cell}>
+          <DeleteButton handleDelete={handleDelete} />
+        </td>
       </tr>
     );
   });
@@ -82,6 +89,7 @@ export const AttributesTable = ({
           <th className={styles.tableHeader}>Name</th>
           <th className={styles.tableHeader}>Labels</th>
           <th className={styles.tableHeader}>Created At</th>
+          <th className={styles.tableHeader}>Delete</th>
         </tr>
 
         {attributesRows}
