@@ -1,0 +1,14 @@
+.button {
+  padding: 8px 14px;
+  border-radius: 8px;
+}
+
+.confirm {
+  background-color: lightgreen;
+  color: white;
+}
+
+.reject {
+  background-color: lightcoral;
+  color: white;
+}

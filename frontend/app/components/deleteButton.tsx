@@ -1,13 +1,15 @@
 import { IoMdTrash } from "react-icons/io";
 
 type DeleteButtonProps = {
-  handleDelete: () => void;
+  handleDelete: (
+    vent?: React.MouseEvent<HTMLButtonElement, MouseEvent>
+  ) => void;
 };
 
 export const DeleteButton = ({ handleDelete }: DeleteButtonProps) => {
   return (
-    <button>
-      <IoMdTrash size="24" onClick={handleDelete} />
+    <button onClick={handleDelete}>
+      <IoMdTrash size="24" />
     </button>
   );
 };

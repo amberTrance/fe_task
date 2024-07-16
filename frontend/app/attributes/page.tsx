@@ -1,14 +1,14 @@
-import { getAttributes, getAllLabels } from "../api/api";
+import { getAttributesApi, getAllLabelsApi } from "../api/api";
 import { AttributesTable } from "./components/attributesTable";
 
 import styles from "./page.module.css";
 
 export default async function Attributes() {
-  const attributes = await getAttributes({
+  const attributes = await getAttributesApi({
     offset: 0,
   });
 
-  const labels = await getAllLabels();
+  const labels = await getAllLabelsApi();
 
   // --- RENDER ---
 

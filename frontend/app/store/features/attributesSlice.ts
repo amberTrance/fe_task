@@ -26,11 +26,17 @@ export const attributes = createSlice({
       state.value.data.push(...action.payload.data);
       state.value.meta = action.payload.meta;
     },
-    reset: () => {
+    deleteAttribute: (state, action: PayloadAction<{ id: string }>) => {
+      state.value.data = state.value.data.filter(
+        (attribute) => attribute.id !== action.payload.id
+      );
+    },
+    resetAttributes: () => {
       return initialState;
     },
   },
 });
 
-export const { addAttributes, reset } = attributes.actions;
+export const { addAttributes, resetAttributes, deleteAttribute } =
+  attributes.actions;
 export default attributes.reducer;

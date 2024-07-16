@@ -1,17 +1,22 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { useMount } from "react-use";
 import { isEmpty } from "lodash";
 import { useDispatch } from "react-redux";
+import { toast } from "react-toastify";
 
 import styles from "./attributesTable.module.css";
-import { AppDispatch, useAppSelector } from "@/app/redux/store";
-import { addAttributes } from "@/app/redux/features/attributesSlice";
-import { fetchAttributes } from "@/app/redux/thunks";
+import { AppDispatch, useAppSelector } from "@/app/store/store";
+import {
+  addAttributes,
+  deleteAttribute,
+} from "@/app/store/features/attributesSlice";
+import { fetchAttributes } from "@/app/store/thunks";
 import { mapAttributesLabelIdsToLabels } from "../utils/helpers";
 import { DeleteButton } from "@/app/components/deleteButton";
+import { deleteAttributeApi } from "@/app/api/api";
+import { ConfirmationModal } from "@/app/components/confirmationModal/confirmationModal";
 
 type AttributesTableProps = {
   attributesServer: Attributes;
@@ -27,6 +32,17 @@ export const AttributesTable = ({
 
   const containerRef = useRef<HTMLTableRowElement | null>(null);
   const attributes = useAppSelector((state) => state.attributesReducer.value);
+
+  // --- STATE ---
+
+  const [isDeleteModalShown, setIsDeleteModalShown] = useState(false);
+  const [attributeToDelete, setAttributeToDelete] = useState<
+    undefined | Attribute
+  >();
+
+  if (isEmpty(attributes.data)) {
+    dispatch(addAttributes(attributesServer));
+  }
 
   // --- EFFECTS ---
 
@@ -49,13 +65,29 @@ export const AttributesTable = ({
     return () => observer.disconnect();
   }, [attributes.meta.hasNextPage, containerRef, dispatch]);
 
-  useMount(() => {
-    if (isEmpty(attributes.data)) {
-      dispatch(addAttributes(attributesServer));
-    }
-  });
+  const handleClose = () => setIsDeleteModalShown(false);
 
-  const handleDelete = () => {};
+  const handleConfirmDelete = async (attribute?: Attribute) => {
+    if (!attribute) {
+      return;
+    }
+
+    const { id, name } = attribute;
+
+    try {
+      await deleteAttributeApi({ id });
+
+      dispatch(deleteAttribute({ id }));
+
+      toast.success(`${name} was successfully deleted.`);
+    } catch (error) {
+      toast.error(`${name} couldn't be deleted. Try another time.`, {
+        isLoading: false,
+      });
+    }
+
+    handleClose();
+  };
 
   // --- HELPERS ---
 
@@ -74,7 +106,14 @@ export const AttributesTable = ({
         <td className={styles.cell}>{labels.join(", ")}</td>
         <td className={styles.cell}>{attribute.createdAt}</td>
         <td className={styles.cell}>
-          <DeleteButton handleDelete={handleDelete} />
+          <DeleteButton
+            handleDelete={(e) => {
+              e?.preventDefault();
+              e?.stopPropagation();
+              setIsDeleteModalShown(true);
+              setAttributeToDelete(attribute);
+            }}
+          />
         </td>
       </tr>
     );
@@ -83,18 +122,26 @@ export const AttributesTable = ({
   // --- RENDER ---
 
   return (
-    <table className={styles.table}>
-      <tbody>
-        <tr>
-          <th className={styles.tableHeader}>Name</th>
-          <th className={styles.tableHeader}>Labels</th>
-          <th className={styles.tableHeader}>Created At</th>
-          <th className={styles.tableHeader}>Delete</th>
-        </tr>
+    <>
+      <table className={styles.table}>
+        <tbody>
+          <tr>
+            <th className={styles.tableHeader}>Name</th>
+            <th className={styles.tableHeader}>Labels</th>
+            <th className={styles.tableHeader}>Created At</th>
+            <th className={styles.tableHeader}>Delete</th>
+          </tr>
 
-        {attributesRows}
-        <tr ref={containerRef}></tr>
-      </tbody>
-    </table>
+          {attributesRows}
+          <tr ref={containerRef}></tr>
+        </tbody>
+      </table>
+      <ConfirmationModal
+        handleClose={handleClose}
+        handleConfirm={() => handleConfirmDelete(attributeToDelete)}
+        isShown={isDeleteModalShown}
+        label={`Are you sure you want to delete ${attributeToDelete?.name}?`}
+      />
+    </>
   );
 };

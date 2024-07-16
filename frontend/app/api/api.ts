@@ -2,14 +2,14 @@ type MetaProps = {
   offset: number;
 };
 
-export const getAttributes = async ({
+export const getAttributesApi = async ({
   offset,
 }: MetaProps): Promise<Attributes> => {
   const url = new URL("http://localhost:3000/attributes");
 
   url.searchParams.set("offset", String(offset));
 
-  const response = await fetch(url);
+  const response = await fetch(url, { cache: "no-store" });
 
   if (!response.ok) {
     throw new Error("Failed to fetch attributes.");
@@ -20,7 +20,7 @@ export const getAttributes = async ({
   return result;
 };
 
-export const getAttributeDetails = async ({
+export const getAttributeDetailsApi = async ({
   id,
 }: {
   id: string;
@@ -38,7 +38,30 @@ export const getAttributeDetails = async ({
   return result;
 };
 
-export const getAllLabels = async (): Promise<Labels> => {
+export const deleteAttributeApi = async ({
+  id,
+}: {
+  id: string;
+}): Promise<AttributeDetails> => {
+  const url = new URL(`http://localhost:3000/attributes/${id}`);
+
+  const response = await fetch(url, {
+    method: "DELETE",
+    body: JSON.stringify({
+      id: id,
+    }),
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to fetch attributes.");
+  }
+
+  const result = await response.json();
+
+  return result;
+};
+
+export const getAllLabelsApi = async (): Promise<Labels> => {
   let offset = 0;
   let allLabels: Labels = {
     data: [],
