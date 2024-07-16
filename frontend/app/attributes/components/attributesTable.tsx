@@ -23,6 +23,13 @@ type AttributesTableProps = {
   labelsServer: Labels;
 };
 
+type MetaProps = {
+  offset?: number;
+  sortBy?: "name" | "createdAt";
+  sortDir?: "asc" | "desc";
+  searchText?: string;
+};
+
 export const AttributesTable = ({
   attributesServer,
   labelsServer,
@@ -39,6 +46,17 @@ export const AttributesTable = ({
   const [attributeToDelete, setAttributeToDelete] = useState<
     undefined | Attribute
   >();
+  const [sortDir, setSortDir] = useState<"asc" | "desc">("asc");
+
+  const toggleSortDir = () => {
+    setSortDir((sortDir) => {
+      if (sortDir === "asc") {
+        return "desc";
+      }
+
+      return "asc";
+    });
+  };
 
   if (isEmpty(attributes.data)) {
     dispatch(addAttributes(attributesServer));
@@ -50,7 +68,7 @@ export const AttributesTable = ({
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting && attributes.meta.hasNextPage) {
-          dispatch(fetchAttributes());
+          dispatch(fetchAttributes({}));
         }
       },
       {
@@ -87,6 +105,11 @@ export const AttributesTable = ({
     }
 
     handleClose();
+  };
+
+  const handleGetAttributes = ({ sortBy, sortDir, searchText }: MetaProps) => {
+    toggleSortDir();
+    dispatch(fetchAttributes({ offset: 0, sortBy, sortDir, searchText }));
   };
 
   // --- HELPERS ---
@@ -126,10 +149,30 @@ export const AttributesTable = ({
       <table className={styles.table}>
         <tbody>
           <tr>
-            <th className={styles.tableHeader}>Name</th>
-            <th className={styles.tableHeader}>Labels</th>
-            <th className={styles.tableHeader}>Created At</th>
-            <th className={styles.tableHeader}>Delete</th>
+            <th
+              className={styles.cell}
+              onClick={() =>
+                handleGetAttributes({
+                  sortBy: "name",
+                  sortDir,
+                })
+              }
+            >
+              Name
+            </th>
+            <th className={styles.cell}>Labels</th>
+            <th
+              className={styles.cell}
+              onClick={() =>
+                handleGetAttributes({
+                  sortBy: "createdAt",
+                  sortDir,
+                })
+              }
+            >
+              Created At
+            </th>
+            <th className={styles.cell}>Delete</th>
           </tr>
 
           {attributesRows}

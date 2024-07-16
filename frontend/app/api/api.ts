@@ -1,13 +1,29 @@
 type MetaProps = {
   offset: number;
+  sortBy?: "name" | "createdAt";
+  sortDir?: "asc" | "desc";
+  searchText?: string;
 };
 
 export const getAttributesApi = async ({
   offset,
+  sortBy,
+  sortDir,
+  searchText,
 }: MetaProps): Promise<Attributes> => {
   const url = new URL("http://localhost:3000/attributes");
 
   url.searchParams.set("offset", String(offset));
+
+  if (sortBy) {
+    url.searchParams.set("sortBy", String(sortBy));
+  }
+  if (sortDir) {
+    url.searchParams.set("sortDir", String(sortDir));
+  }
+  if (searchText) {
+    url.searchParams.set("searchText", String(searchText));
+  }
 
   const response = await fetch(url, { cache: "no-store" });
 

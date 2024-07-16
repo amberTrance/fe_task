@@ -23,8 +23,15 @@ export const attributes = createSlice({
   name: "attributes",
   reducers: {
     addAttributes: (state, action: PayloadAction<Attributes>) => {
-      state.value.data.push(...action.payload.data);
       state.value.meta = action.payload.meta;
+
+      if (action.payload.meta.offset === 0) {
+        state.value.data = [...action.payload.data];
+
+        return;
+      }
+
+      state.value.data.push(...action.payload.data);
     },
     deleteAttribute: (state, action: PayloadAction<{ id: string }>) => {
       state.value.data = state.value.data.filter(

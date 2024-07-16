@@ -3,10 +3,6 @@
   cursor: pointer;
 }
 
-.tableHeader {
-  padding: 30px 20px;
-}
-
 .table {
   width: 100%;
   font-size: large;
