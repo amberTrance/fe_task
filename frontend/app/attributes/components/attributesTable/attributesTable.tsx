@@ -13,7 +13,7 @@ import {
   deleteAttribute,
 } from "@/app/store/features/attributesSlice";
 import { fetchAttributes } from "@/app/store/thunks";
-import { mapAttributesLabelIdsToLabels } from "../utils/helpers";
+import { mapAttributesLabelIdsToLabels } from "../../utils/helpers";
 import { DeleteButton } from "@/app/components/deleteButton";
 import { deleteAttributeApi } from "@/app/api/api";
 import { ConfirmationModal } from "@/app/components/confirmationModal/confirmationModal";
@@ -25,7 +25,7 @@ type AttributesTableProps = {
 
 type MetaProps = {
   offset?: number;
-  sortBy?: "name" | "createdAt";
+  sortBy: "name" | "createdAt";
   sortDir?: "asc" | "desc";
   searchText?: string;
 };
@@ -48,14 +48,12 @@ export const AttributesTable = ({
   >();
   const [sortDir, setSortDir] = useState<"asc" | "desc">("asc");
 
-  const toggleSortDir = () => {
-    setSortDir((sortDir) => {
-      if (sortDir === "asc") {
-        return "desc";
-      }
+  const toggleSortDir = (sortBy: "name" | "createdAt") => {
+    if (sortBy === attributes.meta.sortBy) {
+      return setSortDir((sortDir) => (sortDir === "asc" ? "desc" : "asc"));
+    }
 
-      return "asc";
-    });
+    setSortDir("asc");
   };
 
   if (isEmpty(attributes.data)) {
@@ -108,7 +106,7 @@ export const AttributesTable = ({
   };
 
   const handleGetAttributes = ({ sortBy, sortDir, searchText }: MetaProps) => {
-    toggleSortDir();
+    toggleSortDir(sortBy);
     dispatch(fetchAttributes({ offset: 0, sortBy, sortDir, searchText }));
   };
 

@@ -1,5 +1,6 @@
 import { getAttributesApi, getAllLabelsApi } from "../api/api";
-import { AttributesTable } from "./components/attributesTable";
+import { AttributesSearch } from "./components/attributesSearch/attributesSearch";
+import { AttributesTable } from "./components/attributesTable/attributesTable";
 
 import styles from "./page.module.css";
 
@@ -16,6 +17,8 @@ export default async function Attributes() {
     <main>
       <section>
         <h1 className={styles.heading}>Attributes</h1>
+
+        <AttributesSearch />
 
         {attributes && (
           <AttributesTable
