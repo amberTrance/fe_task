@@ -3,42 +3,42 @@
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { isEmpty } from "lodash";
-import { useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
 
 import styles from "./attributesTable.module.css";
-import { AppDispatch, useAppSelector } from "@/app/store/store";
 import {
   addAttributes,
   deleteAttribute,
-} from "@/app/store/features/attributesSlice";
+} from "@/app/store/features/attributes/attributesSlice";
 import { fetchAttributes } from "@/app/store/thunks";
 import { mapAttributesLabelIdsToLabels } from "../../utils/helpers";
 import { DeleteButton } from "@/app/components/deleteButton";
 import { deleteAttributeApi } from "@/app/api/api";
 import { ConfirmationModal } from "@/app/components/confirmationModal/confirmationModal";
+import { useAppDispatch } from "@/app/store/hooks";
+import { selectAttributes } from "@/app/store/features/attributes/attributesSelectors";
 
 type AttributesTableProps = {
   attributesServer: Attributes;
   labelsServer: Labels;
 };
 
-type MetaProps = {
-  offset?: number;
-  sortBy: "name" | "createdAt";
-  sortDir?: "asc" | "desc";
-  searchText?: string;
-};
-
 export const AttributesTable = ({
   attributesServer,
   labelsServer,
 }: AttributesTableProps) => {
-  const router = useRouter();
-  const dispatch = useDispatch<AppDispatch>();
-
   const containerRef = useRef<HTMLTableRowElement | null>(null);
-  const attributes = useAppSelector((state) => state.attributesReducer.value);
+
+  const router = useRouter();
+  const dispatch = useAppDispatch();
+  const attributes = useSelector(selectAttributes);
+
+  // --- INITIATE REDUX ---
+
+  if (isEmpty(attributes.data)) {
+    dispatch(addAttributes(attributesServer));
+  }
 
   // --- STATE ---
 
@@ -47,18 +47,6 @@ export const AttributesTable = ({
     undefined | Attribute
   >();
   const [sortDir, setSortDir] = useState<"asc" | "desc">("asc");
-
-  const toggleSortDir = (sortBy: "name" | "createdAt") => {
-    if (sortBy === attributes.meta.sortBy) {
-      return setSortDir((sortDir) => (sortDir === "asc" ? "desc" : "asc"));
-    }
-
-    setSortDir("asc");
-  };
-
-  if (isEmpty(attributes.data)) {
-    dispatch(addAttributes(attributesServer));
-  }
 
   // --- EFFECTS ---
 
@@ -81,14 +69,26 @@ export const AttributesTable = ({
     return () => observer.disconnect();
   }, [attributes.meta.hasNextPage, containerRef, dispatch]);
 
-  const handleClose = () => setIsDeleteModalShown(false);
+  // --- HELPERS ---
 
-  const handleConfirmDelete = async (attribute?: Attribute) => {
-    if (!attribute) {
+  const toggleSortDir = (sortBy: "name" | "createdAt") => {
+    if (sortBy === attributes.meta.sortBy) {
+      setSortDir((sortDir) => (sortDir === "asc" ? "desc" : "asc"));
+
       return;
     }
 
-    const { id, name } = attribute;
+    setSortDir("asc");
+  };
+
+  const handleCloseModal = () => setIsDeleteModalShown(false);
+
+  const handleConfirmDelete = async () => {
+    if (!attributeToDelete) {
+      return;
+    }
+
+    const { id, name } = attributeToDelete;
 
     try {
       await deleteAttributeApi({ id });
@@ -102,15 +102,18 @@ export const AttributesTable = ({
       });
     }
 
-    handleClose();
+    handleCloseModal();
   };
 
-  const handleGetAttributes = ({ sortBy, sortDir, searchText }: MetaProps) => {
+  const handleGetAttributes = ({
+    sortBy,
+    sortDir,
+    searchText,
+  }: Omit<Meta, "hasNextPage" | "offset" | "limit">) => {
     toggleSortDir(sortBy);
+
     dispatch(fetchAttributes({ offset: 0, sortBy, sortDir, searchText }));
   };
-
-  // --- HELPERS ---
 
   const attributesRows = attributes.data.map((attribute) => {
     const labels = mapAttributesLabelIdsToLabels({
@@ -124,8 +127,11 @@ export const AttributesTable = ({
         onClick={() => router.push(`/attributes/${attribute.id}`)}
       >
         <td className={styles.cell}>{attribute.name}</td>
+
         <td className={styles.cell}>{labels.join(", ")}</td>
+
         <td className={styles.cell}>{attribute.createdAt}</td>
+
         <td className={styles.cell}>
           <DeleteButton
             handleDelete={(e) => {
@@ -158,7 +164,9 @@ export const AttributesTable = ({
             >
               Name
             </th>
+
             <th className={styles.cell}>Labels</th>
+
             <th
               className={styles.cell}
               onClick={() =>
@@ -170,17 +178,19 @@ export const AttributesTable = ({
             >
               Created At
             </th>
+
             <th className={styles.cell}>Delete</th>
           </tr>
 
           {attributesRows}
+
           <tr ref={containerRef}></tr>
         </tbody>
       </table>
 
       <ConfirmationModal
-        handleClose={handleClose}
-        handleConfirm={() => handleConfirmDelete(attributeToDelete)}
+        handleClose={handleCloseModal}
+        handleConfirm={handleConfirmDelete}
         isShown={isDeleteModalShown}
         label={`Are you sure you want to delete ${attributeToDelete?.name}?`}
       />

@@ -12,17 +12,7 @@ type AttributeDetails = {
 
 type Attributes = {
   data: Attribute[];
-  meta: {
-    searchText: string;
-    sortBy: "name" | "createdAt";
-    sortDir: "asc" | "desc";
-  } & PageProps;
-};
-
-type PageProps = {
-  offset: number;
-  limit: number;
-  hasNextPage: boolean;
+  meta: Meta;
 };
 
 type LabelId = string;
@@ -34,5 +24,14 @@ type Label = {
 
 type Labels = {
   data: Label[];
-  meta: PageProps;
+  meta: Pick<Meta, "offset" | "limit" | "hasNextPage">;
+};
+
+type Meta = {
+  offset: number;
+  limit: number;
+  hasNextPage: boolean;
+  sortBy: "name" | "createdAt";
+  sortDir: "asc" | "desc";
+  searchText?: string;
 };

@@ -1,5 +1,5 @@
 import { getAttributesApi } from "../api/api";
-import { addAttributes } from "./features/attributesSlice";
+import { addAttributes } from "./features/attributes/attributesSlice";
 import { AppDispatch, RootState } from "./store";
 
 type MetaProps = {

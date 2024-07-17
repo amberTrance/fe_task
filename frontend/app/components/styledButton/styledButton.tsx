@@ -1,10 +1,10 @@
+import styles from "./styledButton.module.css";
+
 type StyledButtonProps = {
   handleClick: () => void;
   label: string;
   style: "confirm" | "reject";
 };
-
-import styles from "./styledButton.module.css";
 
 export const StyledButton = ({
   handleClick,

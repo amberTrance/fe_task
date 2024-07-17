@@ -2,14 +2,13 @@
 
 import { ChangeEvent } from "react";
 import { debounce } from "lodash";
-import { useDispatch } from "react-redux";
 
 import styles from "./attributesSearch.module.css";
-import { AppDispatch } from "@/app/store/store";
 import { fetchAttributes } from "@/app/store/thunks";
+import { useAppDispatch } from "@/app/store/hooks";
 
 export const AttributesSearch = () => {
-  const dispatch = useDispatch<AppDispatch>();
+  const dispatch = useAppDispatch();
 
   // --- HELPERS ---
 

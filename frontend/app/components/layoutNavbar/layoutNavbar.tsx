@@ -1,14 +1,14 @@
 "use client";
 
 import Link from "next/link";
-import { useDispatch } from "react-redux";
 
-import { AppDispatch } from "@/app/store/store";
-import { resetAttributes } from "@/app/store/features/attributesSlice";
 import styles from "./layoutNavbar.module.css";
+import { AppDispatch } from "@/app/store/store";
+import { resetAttributes } from "@/app/store/features/attributes/attributesSlice";
+import { useAppDispatch } from "@/app/store/hooks";
 
 export const LayoutNavar = () => {
-  const dispatch = useDispatch<AppDispatch>();
+  const dispatch = useAppDispatch();
 
   // --- HELPERS ---
 

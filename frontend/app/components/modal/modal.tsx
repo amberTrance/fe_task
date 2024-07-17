@@ -1,7 +1,6 @@
+import styles from "./modal.module.css";
 import React, { ReactNode } from "react";
 import { IoMdClose } from "react-icons/io";
-
-import styles from "./modal.module.css";
 
 type ModalProps = {
   children: ReactNode;

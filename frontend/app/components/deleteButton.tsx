@@ -2,7 +2,7 @@ import { IoMdTrash } from "react-icons/io";
 
 type DeleteButtonProps = {
   handleDelete: (
-    vent?: React.MouseEvent<HTMLButtonElement, MouseEvent>
+    event?: React.MouseEvent<HTMLButtonElement, MouseEvent>
   ) => void;
 };
 

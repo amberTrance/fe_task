@@ -1,9 +1,8 @@
 "use client";
 
+import styles from "./backButton.module.css";
 import { useRouter } from "next/navigation";
 import { MdArrowBack } from "react-icons/md";
-
-import styles from "./backButton.module.css";
 
 type BackButtonProps = {
   label?: string;

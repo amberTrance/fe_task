@@ -3,6 +3,7 @@ import { AttributeDetails } from "./components/attributeDetails";
 
 export default async function Page({ params }: { params: { id: string } }) {
   const { id } = params;
+
   const attributeDetails = await getAttributeDetailsApi({
     id,
   });

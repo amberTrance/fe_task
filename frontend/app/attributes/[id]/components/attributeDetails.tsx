@@ -3,17 +3,15 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
-import { useDispatch } from "react-redux";
 
+import styles from "./attributeDetails.module.css";
 import { BackButton } from "@/app/components/backButton/backButton";
 import { DeleteButton } from "@/app/components/deleteButton";
 import { mapAttributesLabelIdsToLabels } from "../../utils/helpers";
 import { deleteAttributeApi } from "@/app/api/api";
 import { ConfirmationModal } from "@/app/components/confirmationModal/confirmationModal";
-
-import styles from "./attributeDetails.module.css";
-import { AppDispatch } from "@/app/store/store";
-import { deleteAttribute } from "@/app/store/features/attributesSlice";
+import { deleteAttribute } from "@/app/store/features/attributes/attributesSlice";
+import { useAppDispatch } from "@/app/store/hooks";
 
 type AttributeDetailsProps = {
   attributeDetails: Attribute;
@@ -27,7 +25,7 @@ export const AttributeDetails = ({
   labels,
 }: AttributeDetailsProps) => {
   const router = useRouter();
-  const dispatch = useDispatch<AppDispatch>();
+  const dispatch = useAppDispatch();
 
   // --- STATE ---
 
@@ -40,12 +38,11 @@ export const AttributeDetails = ({
     labels: labels,
   });
 
-  // --- CALLBACKS ---
-
-  const handleDelete = () => {
+  const handleClickDelete = () => {
     setIsDeleteModalShown(true);
   };
-  const handleClose = () => setIsDeleteModalShown(false);
+
+  const handleCloseDeleteModal = () => setIsDeleteModalShown(false);
 
   const handleConfirmDelete = async () => {
     try {
@@ -58,7 +55,7 @@ export const AttributeDetails = ({
       toast.error("Attribute couldn't be deleted. Try another time.");
     }
 
-    handleClose();
+    handleCloseDeleteModal();
   };
 
   // --- RENDER ---
@@ -73,10 +70,10 @@ export const AttributeDetails = ({
         <div className={styles.container}>
           <p>{mappedlabels.join(", ")}</p>
 
-          <DeleteButton handleDelete={handleDelete} />
+          <DeleteButton handleDelete={handleClickDelete} />
 
           <ConfirmationModal
-            handleClose={handleClose}
+            handleClose={handleCloseDeleteModal}
             handleConfirm={handleConfirmDelete}
             isShown={isDeleteModalShown}
             label="Are you sure you want to delete?"
