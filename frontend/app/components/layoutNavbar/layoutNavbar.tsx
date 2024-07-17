@@ -5,6 +5,7 @@ import { useDispatch } from "react-redux";
 
 import { AppDispatch } from "@/app/store/store";
 import { resetAttributes } from "@/app/store/features/attributesSlice";
+import styles from "./layoutNavbar.module.css";
 
 export const LayoutNavar = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -16,7 +17,7 @@ export const LayoutNavar = () => {
   // --- RENDER ---
 
   return (
-    <nav>
+    <nav className={styles.nav}>
       <Link href="/" onClick={handleHomeClick}>
         Home
       </Link>

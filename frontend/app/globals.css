@@ -25,13 +25,6 @@ a {
   text-decoration: none;
 }
 
-nav {
-  display: flex;
-  padding: 16px 0px;
-  gap: 24px;
-  font-weight: bold;
-}
-
 h1 {
   text-align: center;
 }
@@ -49,10 +42,4 @@ button {
   cursor: pointer;
   outline: none;
   box-shadow: none;
-}
-
-.row {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
 }
