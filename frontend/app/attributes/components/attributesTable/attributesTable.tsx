@@ -177,6 +177,7 @@ export const AttributesTable = ({
           <tr ref={containerRef}></tr>
         </tbody>
       </table>
+
       <ConfirmationModal
         handleClose={handleClose}
         handleConfirm={() => handleConfirmDelete(attributeToDelete)}
