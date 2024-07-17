@@ -14,7 +14,7 @@ export const AttributesSearch = () => {
 
   const debounceSearchInput = debounce((input: string) => {
     dispatch(fetchAttributes({ offset: 0, searchText: input }));
-  }, 1000);
+  }, 500);
 
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
     debounceSearchInput(event.currentTarget.value);
