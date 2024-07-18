@@ -46,7 +46,7 @@ export const getAttributeDetailsApi = async ({
   const response = await fetch(url);
 
   if (!response.ok) {
-    throw new Error("Failed to fetch attributes.");
+    throw new Error("Failed to fetch attribute.");
   }
 
   const result = await response.json();
@@ -69,7 +69,7 @@ export const deleteAttributeApi = async ({
   });
 
   if (!response.ok) {
-    throw new Error("Failed to fetch attributes.");
+    throw new Error("Failed to delete label.");
   }
 
   const result = await response.json();
@@ -93,7 +93,7 @@ export const getAllLabelsApi = async (): Promise<Labels> => {
     const response = await fetch(url);
 
     if (!response.ok) {
-      throw new Error("Failed to fetch attributes.");
+      throw new Error("Failed to fetch labels.");
     }
 
     const result = await response.json();
