@@ -34,7 +34,7 @@ export const AttributesTable = ({
 
   // --- INITIATE REDUX ---
 
-  if (isEmpty(attributes.data)) {
+  if (isEmpty(attributes.data) && isEmpty(attributes.meta.searchText)) {
     dispatch(addAttributes(attributesServer));
   }
 
