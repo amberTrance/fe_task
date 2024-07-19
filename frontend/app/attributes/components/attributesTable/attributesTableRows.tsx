@@ -1,5 +1,3 @@
-import { useRouter } from "next/navigation";
-
 import { mapAttributesLabelIdsToLabels } from "../../utils/helpers";
 import { AttributesTableRow } from "./attributesTableRow";
 
@@ -16,8 +14,6 @@ export const AttributesTableRows = ({
   labelsServer,
   handleDelete,
 }: AttributesTableRowProps) => {
-  const router = useRouter();
-
   // --- HELPERS ---
 
   const attributesRows = attributes.data.map((attribute) => {
