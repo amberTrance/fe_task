@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { useRouter } from "next/navigation";
 import { isEmpty } from "lodash";
 import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
@@ -12,12 +11,11 @@ import {
   deleteAttribute,
 } from "@/app/store/features/attributes/attributesSlice";
 import { fetchAttributes } from "@/app/store/thunks";
-import { mapAttributesLabelIdsToLabels } from "../../utils/helpers";
-import { DeleteButton } from "@/app/components/deleteButton";
 import { deleteAttributeApi } from "@/app/api/api";
 import { ConfirmationModal } from "@/app/components/confirmationModal/confirmationModal";
 import { useAppDispatch } from "@/app/store/hooks";
 import { selectAttributes } from "@/app/store/features/attributes/attributesSelectors";
+import { AttributesTableRow } from "./attributesTableRow";
 
 type AttributesTableProps = {
   attributesServer: Attributes;
@@ -30,7 +28,6 @@ export const AttributesTable = ({
 }: AttributesTableProps) => {
   const containerRef = useRef<HTMLTableRowElement | null>(null);
 
-  const router = useRouter();
   const dispatch = useAppDispatch();
   const attributes = useSelector(selectAttributes);
 
@@ -115,36 +112,14 @@ export const AttributesTable = ({
     dispatch(fetchAttributes({ offset: 0, sortBy, sortDir, searchText }));
   };
 
-  const attributesRows = attributes.data.map((attribute) => {
-    const labels = mapAttributesLabelIdsToLabels({
-      attribute,
-      labels: labelsServer,
-    });
-
-    return (
-      <tr
-        key={attribute.name}
-        onClick={() => router.push(`/attributes/${attribute.id}`)}
-      >
-        <td className={styles.cell}>{attribute.name}</td>
-
-        <td className={styles.cell}>{labels.join(", ")}</td>
-
-        <td className={styles.cell}>{attribute.createdAt}</td>
-
-        <td className={styles.cell}>
-          <DeleteButton
-            handleDelete={(e) => {
-              e?.preventDefault();
-              e?.stopPropagation();
-              setIsDeleteModalShown(true);
-              setAttributeToDelete(attribute);
-            }}
-          />
-        </td>
-      </tr>
-    );
-  });
+  const handleDeleteAttribute =
+    (event?: React.MouseEvent<HTMLButtonElement, MouseEvent>) =>
+    (attribute: Attribute) => {
+      event?.preventDefault();
+      event?.stopPropagation();
+      setIsDeleteModalShown(true);
+      setAttributeToDelete(attribute);
+    };
 
   // --- RENDER ---
 
@@ -182,7 +157,11 @@ export const AttributesTable = ({
             <th className={styles.cell}>Delete</th>
           </tr>
 
-          {attributesRows}
+          <AttributesTableRow
+            attributes={attributes}
+            labelsServer={labelsServer}
+            handleDelete={handleDeleteAttribute}
+          />
 
           <tr ref={containerRef}></tr>
         </tbody>
