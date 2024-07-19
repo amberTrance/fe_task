@@ -14,6 +14,7 @@ type AttributesTableRowProps = {
   name: string;
 };
 
+// eslint-disable-next-line react/display-name
 export const AttributesTableRow = memo(
   ({ createdAt, handleDelete, id, labels, name }: AttributesTableRowProps) => {
     const router = useRouter();
