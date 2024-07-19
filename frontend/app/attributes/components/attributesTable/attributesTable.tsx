@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { isEmpty } from "lodash";
 import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
@@ -15,7 +15,7 @@ import { deleteAttributeApi } from "@/app/api/api";
 import { ConfirmationModal } from "@/app/components/confirmationModal/confirmationModal";
 import { useAppDispatch } from "@/app/store/hooks";
 import { selectAttributes } from "@/app/store/features/attributes/attributesSelectors";
-import { AttributesTableRow } from "./attributesTableRow";
+import { AttributesTableRows } from "./attributesTableRows";
 
 type AttributesTableProps = {
   attributesServer: Attributes;
@@ -41,7 +41,7 @@ export const AttributesTable = ({
 
   const [isDeleteModalShown, setIsDeleteModalShown] = useState(false);
   const [attributeToDelete, setAttributeToDelete] = useState<
-    undefined | Attribute
+    undefined | Pick<Attribute, "id" | "name">
   >();
   const [sortDir, setSortDir] = useState<"asc" | "desc">("asc");
 
@@ -112,14 +112,16 @@ export const AttributesTable = ({
     dispatch(fetchAttributes({ offset: 0, sortBy, sortDir, searchText }));
   };
 
-  const handleDeleteAttribute =
+  const handleDeleteAttribute = useCallback(
     (event?: React.MouseEvent<HTMLButtonElement, MouseEvent>) =>
-    (attribute: Attribute) => {
-      event?.preventDefault();
-      event?.stopPropagation();
-      setIsDeleteModalShown(true);
-      setAttributeToDelete(attribute);
-    };
+      (attribute: Pick<Attribute, "id" | "name">) => {
+        event?.preventDefault();
+        event?.stopPropagation();
+        setIsDeleteModalShown(true);
+        setAttributeToDelete(attribute);
+      },
+    []
+  );
 
   // --- RENDER ---
 
@@ -157,7 +159,7 @@ export const AttributesTable = ({
             <th className={styles.cell}>Delete</th>
           </tr>
 
-          <AttributesTableRow
+          <AttributesTableRows
             attributes={attributes}
             labelsServer={labelsServer}
             handleDelete={handleDeleteAttribute}
