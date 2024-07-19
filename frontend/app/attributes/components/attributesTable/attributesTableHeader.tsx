@@ -21,22 +21,22 @@ export const AttributesTableHeader = ({
 
   const toggleSortDir = (sortBy: "name" | "createdAt") => {
     if (sortBy === attributes.meta.sortBy) {
-      setSortDir((sortDir) => (sortDir === "asc" ? "desc" : "asc"));
+      const sort = sortDir === "asc" ? "desc" : "asc";
 
-      return;
+      setSortDir(sort);
+
+      return sort;
     }
 
     setSortDir("asc");
+
+    return "asc";
   };
 
-  const handleGetAttributes = ({
-    sortBy,
-    sortDir,
-    searchText,
-  }: Omit<Meta, "hasNextPage" | "offset" | "limit">) => {
-    toggleSortDir(sortBy);
+  const handleGetAttributes = ({ sortBy }: Pick<Meta, "sortBy">) => {
+    const sort = toggleSortDir(sortBy);
 
-    dispatch(fetchAttributes({ offset: 0, sortBy, sortDir, searchText }));
+    dispatch(fetchAttributes({ offset: 0, sortBy, sortDir: sort }));
   };
 
   // --- RENDER ---
@@ -48,7 +48,6 @@ export const AttributesTableHeader = ({
         onClick={() =>
           handleGetAttributes({
             sortBy: "name",
-            sortDir,
           })
         }
       >
@@ -62,7 +61,6 @@ export const AttributesTableHeader = ({
         onClick={() =>
           handleGetAttributes({
             sortBy: "createdAt",
-            sortDir,
           })
         }
       >
