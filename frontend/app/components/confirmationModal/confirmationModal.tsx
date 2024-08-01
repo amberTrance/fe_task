@@ -1,3 +1,5 @@
+"use client";
+
 import styles from "./confirmationModal.module.css";
 import Modal from "../modal/modal";
 import { StyledButton } from "../styledButton/styledButton";
