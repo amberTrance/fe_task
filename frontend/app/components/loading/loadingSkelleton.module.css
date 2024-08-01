@@ -1,0 +1,15 @@
+.text {
+  background-color: #e0e0e0;
+  border-radius: 4px;
+  height: 16px;
+  width: 100%;
+  animation: pulse 1.5s infinite;
+}
+
+.icon {
+  background-color: #e0e0e0;
+  border-radius: 4px;
+  height: 18px;
+  width: 15px;
+  animation: pulse 1.5s infinite;
+}

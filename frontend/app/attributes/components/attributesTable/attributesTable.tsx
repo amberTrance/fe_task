@@ -41,9 +41,11 @@ export const AttributesTable = ({
   // --- STATE ---
 
   const [isDeleteModalShown, setIsDeleteModalShown] = useState(false);
-  const [attributeToDelete, setAttributeToDelete] = useState<
-    undefined | Pick<Attribute, "id" | "name">
-  >();
+  const [attributeToDelete, setAttributeToDelete] = useState<null | Pick<
+    Attribute,
+    "id" | "name"
+  >>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   // --- EFFECTS ---
 
@@ -78,6 +80,10 @@ export const AttributesTable = ({
     const { id, name } = attributeToDelete;
 
     try {
+      setIsDeleting(true);
+
+      handleCloseModal();
+
       await deleteAttributeApi({ id });
 
       dispatch(deleteAttribute({ id }));
@@ -89,7 +95,9 @@ export const AttributesTable = ({
       });
     }
 
-    handleCloseModal();
+    setIsDeleting(false);
+
+    setAttributeToDelete(null);
   };
 
   const handleDeleteAttribute = useCallback(
@@ -97,6 +105,7 @@ export const AttributesTable = ({
       (attribute: Pick<Attribute, "id" | "name">) => {
         event?.preventDefault();
         event?.stopPropagation();
+
         setIsDeleteModalShown(true);
         setAttributeToDelete(attribute);
       },
@@ -113,8 +122,10 @@ export const AttributesTable = ({
 
           <AttributesTableRows
             attributes={attributes}
-            labelsServer={labelsServer}
+            attributeToDelete={attributeToDelete}
+            isDeleting={isDeleting}
             handleDelete={handleDeleteAttribute}
+            labelsServer={labelsServer}
           />
 
           <tr ref={containerRef}></tr>
