@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useState } from "react";
 import { isEmpty } from "lodash";
 import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
@@ -10,13 +10,13 @@ import {
   addAttributes,
   deleteAttribute,
 } from "@/app/store/features/attributes/attributesSlice";
-import { fetchAttributes } from "@/app/store/thunks";
 import { deleteAttributeApi } from "@/app/api/api";
 import { ConfirmationModal } from "@/app/components/confirmationModal/confirmationModal";
 import { useAppDispatch } from "@/app/store/hooks";
 import { selectAttributes } from "@/app/store/features/attributes/attributesSelectors";
 import { AttributesTableRows } from "./attributesTableRows";
 import { AttributesTableHeader } from "./attributesTableHeader";
+import { AttributesTableRowRef } from "./attributesTableRowRef";
 
 type AttributesTableProps = {
   attributesServer: Attributes;
@@ -27,8 +27,6 @@ export const AttributesTable = ({
   attributesServer,
   labelsServer,
 }: AttributesTableProps) => {
-  const containerRef = useRef<HTMLTableRowElement | null>(null);
-
   const dispatch = useAppDispatch();
   const attributes = useSelector(selectAttributes);
 
@@ -46,27 +44,6 @@ export const AttributesTable = ({
     "id" | "name"
   >>(null);
   const [isDeleting, setIsDeleting] = useState(false);
-
-  // --- EFFECTS ---
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting && attributes.meta.hasNextPage) {
-          dispatch(fetchAttributes({}));
-        }
-      },
-      {
-        threshold: 1,
-      }
-    );
-
-    if (containerRef.current) {
-      observer.observe(containerRef.current);
-    }
-
-    return () => observer.disconnect();
-  }, [attributes.meta.hasNextPage, containerRef, dispatch]);
 
   // --- HELPERS ---
 
@@ -128,7 +105,7 @@ export const AttributesTable = ({
             labelsServer={labelsServer}
           />
 
-          <tr ref={containerRef}></tr>
+          <AttributesTableRowRef attributes={attributes} />
         </tbody>
       </table>
 
