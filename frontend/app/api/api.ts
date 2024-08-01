@@ -1,3 +1,5 @@
+import { BASE_URL } from "./utils/apiConstants";
+
 type MetaProps = {
   offset: number;
   sortBy?: "name" | "createdAt";
@@ -11,7 +13,7 @@ export const getAttributesApi = async ({
   sortDir,
   searchText,
 }: MetaProps): Promise<Attributes> => {
-  const url = new URL("http://localhost:3000/attributes");
+  const url = new URL(`${BASE_URL}/attributes`);
 
   url.searchParams.set("offset", String(offset));
 
@@ -41,7 +43,7 @@ export const getAttributeDetailsApi = async ({
 }: {
   id: string;
 }): Promise<AttributeDetails> => {
-  const url = new URL(`http://localhost:3000/attributes/${id}`);
+  const url = new URL(`${BASE_URL}/attributes/${id}`);
 
   const response = await fetch(url);
 
@@ -59,7 +61,7 @@ export const deleteAttributeApi = async ({
 }: {
   id: string;
 }): Promise<AttributeDetails> => {
-  const url = new URL(`http://localhost:3000/attributes/${id}`);
+  const url = new URL(`${BASE_URL}/attributes/${id}`);
 
   const response = await fetch(url, {
     method: "DELETE",
@@ -85,7 +87,7 @@ export const getAllLabelsApi = async (): Promise<Labels> => {
   };
   let hasNextPage = true;
 
-  const url = new URL("http://localhost:3000/labels");
+  const url = new URL(`${BASE_URL}/labels`);
 
   do {
     url.searchParams.set("offset", String(offset));
